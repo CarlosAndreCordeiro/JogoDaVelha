@@ -1,0 +1,405 @@
+--===============================================================================================================
+--Declaração de Tabelas e Variáveis--============================================================================
+--===============================================================================================================
+
+nomeJogador1=""
+nomeJogador2=""
+
+placarX=0
+placarO=0
+
+
+posicao = 0
+
+contJogadasdisponiveis = 9
+elementoAtual = ""
+
+
+
+
+tabuleiro = {{" "," "," "},
+			 {" "," "," "},
+			 {" "," "," "}}
+
+
+jogadasDisponiveis = {{"1","2","3"},
+					  {"4","5","6"},
+					  {"7","8","9"}}
+
+
+--===============================================================================================
+--Jogador========================================================================================
+
+--Função responsável para escolha o elemento da jogada--
+
+function escolherElemento()
+
+	print ("\nEscolha um elemento jogador(a) ".. nomeJogador1..".")
+
+
+	while (true) do
+
+		print ("\nEscolha 1 para 'X'\nEscolha 2 para 'O'")
+
+		n=io.read("*number")
+			io.read()
+
+		if(type(n)=="number") then
+
+
+			if(n == 1)then
+
+				elementoAtual = "X"
+
+
+					nomeJogador1 = nomeJogador1 .. " Jogando com 'X' "
+					nomeJogador2 = nomeJogador2 .. " Jogando com 'O' "
+
+				break
+
+			elseif (n == 2) then
+
+				elementoAtual = "O"
+
+					nomeJogador1 = nomeJogador1 .. " Jogando com 'O' "
+					nomeJogador2 = nomeJogador2 .. " Jogano com 'X' "
+
+				break
+
+			end
+		else
+			print("Inválido")
+		end
+
+
+	end
+
+	tabuleiro:iniciarJogo()
+
+end
+
+--Função responsável para a escolha dos nomes dos jogadores--
+
+function escolherNomes()
+
+
+		print ("Digite Seu nome do Jogador 1")
+		nomeJogador1 = io.read()
+
+		print ("Digite Seu nome do Jogador 2")
+		nomeJogador2 = io.read()
+
+		escolherElemento()
+
+end
+
+function mudarJogador()
+
+	if(elementoAtual=="X") then
+		elementoAtual="O"
+	else
+		elementoAtual="X"
+	end
+end
+
+
+--===================================================================================================
+--TABELA JOGADAS DISPONIVEIS=========================================================================
+
+--Função que é responsável para mostrar Jogadas Disponiveis ao decorrer do jogo--
+
+function jogadasDisponiveis:mostrarJogadasDisponiveis()
+
+
+		print(
+				"\nPosições Restantes: 0"..contJogadasdisponiveis .. "\n" ..
+				"\n"..jogadasDisponiveis[1][1] .. "|"..jogadasDisponiveis[1][2]..	"|" ..jogadasDisponiveis[1][3]..
+				"\n".."------" ..
+				"\n"..jogadasDisponiveis[2][1] .. "|"..jogadasDisponiveis[2][2]..	"|" ..jogadasDisponiveis[2][3]..
+				"\n".."------" ..
+				"\n"..jogadasDisponiveis[3][1] .. "|"..jogadasDisponiveis[3][2]..	"|" ..jogadasDisponiveis[3][3].."\n")
+
+end
+
+--===================================================================================================
+--TABELA Tabuleiro--==================================================================================
+
+--Função que exibe o tabuleiro com as jogadas--
+
+function tabuleiro:exibirJogo()
+
+
+
+		print( "\n	JOGO ATUAL:\n"..
+				" \n"..tabuleiro[1][1] .. "|"..tabuleiro[1][2]..	"|" ..tabuleiro[1][3]..
+				" \n".."------" ..
+				" \n"..tabuleiro[2][1] .. "|"..tabuleiro[2][2]..	"|" ..tabuleiro[2][3]..
+				" \n".."------" ..
+				" \n"..tabuleiro[3][1] .. "|"..tabuleiro[3][2]..	"|" ..tabuleiro[3][3].. "\n\n")
+
+
+end
+
+--Função que inicia o jogo--
+
+function tabuleiro:iniciarJogo()
+
+	tabuleiro:exibirJogo()
+	jogadasDisponiveis:mostrarJogadasDisponiveis()
+
+
+	while(true)do
+
+		print ("Você joga com '".. elementoAtual .. "', escolha uma posição no tabuleiro:")
+
+		posicao = io.read("*number")
+		io.read()
+
+		if(type(posicao)=="number") then
+
+
+			if (posicao >= 1 and posicao <= 9) then
+				tabuleiro:alterarPainel(posicao)
+
+			else
+				print ("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n=========================\nESCOLHA UMA OPÇÃO VÁLIDA!\n=========================\n\n\n\n")
+				tabuleiro:iniciarJogo()
+			end
+		else
+			print ("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n=========================\nESCOLHA UMA OPÇÃO VÁLIDA!\n=========================\n\n\n\n")
+			tabuleiro:iniciarJogo()
+		end
+
+		return false
+
+	end
+end
+
+---Funcão que é responsável por verificar quem é o campeão--
+
+function tabuleiro:verificarCampeao()
+
+	if( tabuleiro:verificarVitoria() == true) then
+		print ("\n\n\n\n\n\n\n\n\n\n===========\nO campeão é ".. elementoAtual.. "\n==============\n\n\n\n\n\n\n\n\n\n\n\n\n")
+
+		alterarPlacar(elementoAtual)
+		tabuleiro:exibirJogo()
+		exibirPlacar()
+		tabuleiro:reiniciarJogo()
+
+	else
+
+		mudarJogador()
+		tabuleiro:iniciarJogo()
+	end
+end
+
+--Função que verifica a jogada e se ela está disponível na posição da jogada--
+
+function tabuleiro:alterarPainel(posicao)
+
+
+
+		if(posicao == 1 and tabuleiro[1][1] == " ") then
+			tabuleiro[1][1] = elementoAtual
+			jogadasDisponiveis[1][1] = " "
+			contJogadasdisponiveis = contJogadasdisponiveis -1
+			tabuleiro:verificarCampeao()
+
+
+		elseif (posicao==2 and tabuleiro[1][2]== " " ) then
+			tabuleiro[1][2]= elementoAtual
+			jogadasDisponiveis[1][2] = " "
+			contJogadasdisponiveis = contJogadasdisponiveis -1
+			tabuleiro:verificarCampeao()
+
+		elseif (posicao==3 and tabuleiro[1][3]==" " ) then
+			tabuleiro[1][3]= elementoAtual
+			jogadasDisponiveis[1][3] = " "
+			contJogadasdisponiveis = contJogadasdisponiveis -1
+			tabuleiro:verificarCampeao()
+
+		elseif (posicao==4 and tabuleiro[2][1]==" "  ) then
+			tabuleiro[2][1]= elementoAtual
+			jogadasDisponiveis[2][1] = " "
+			contJogadasdisponiveis = contJogadasdisponiveis -1
+			tabuleiro:verificarCampeao()
+
+
+		elseif (posicao==5 and tabuleiro[2][2]==" " ) then
+			tabuleiro[2][2]= elementoAtual
+			jogadasDisponiveis[2][2] = " "
+			contJogadasdisponiveis = contJogadasdisponiveis -1
+			tabuleiro:verificarCampeao()
+
+
+		elseif (posicao==6 and tabuleiro[2][3]==" " ) then
+			tabuleiro[2][3]= elementoAtual
+			jogadasDisponiveis[2][3] = " "
+			contJogadasdisponiveis = contJogadasdisponiveis -1
+			tabuleiro:verificarCampeao()
+
+
+		elseif (posicao==7 and tabuleiro[3][1]==" " ) then
+			tabuleiro[3][1]= elementoAtual
+			jogadasDisponiveis[3][1] = " "
+			contJogadasdisponiveis = contJogadasdisponiveis -1
+			tabuleiro:verificarCampeao()
+
+
+		elseif (posicao==8 and tabuleiro[3][2]==" "  ) then
+			tabuleiro[3][2]= elementoAtual
+			jogadasDisponiveis[3][2] = " "
+			contJogadasdisponiveis = contJogadasdisponiveis -1
+			tabuleiro:verificarCampeao()
+
+
+		elseif (posicao==9 and tabuleiro[3][3]==" "  ) then
+			tabuleiro[3][3]= elementoAtual
+			jogadasDisponiveis[3][3] = " "
+			contJogadasdisponiveis = contJogadasdisponiveis -1
+			tabuleiro:verificarCampeao()
+
+
+		else
+		print ("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n=========================\nESCOLHA UMA OPÇÃO VÁLIDA!\n=========================\n\n\n\n")
+		tabuleiro:iniciarJogo()
+
+		end
+end
+
+--Função que confere todas as linhas, colunas e diagonais--
+
+function tabuleiro:verificarVitoria()
+
+
+		if(contJogadasdisponiveis > 0)then
+
+			if(tabuleiro[1][1] ~= " " and tabuleiro[1][1]==tabuleiro[1][2] and tabuleiro[1][2] == tabuleiro[1][3]) then
+				return true
+
+			elseif(tabuleiro[2][1] ~= " " and tabuleiro[2][1] == tabuleiro[2][2] and tabuleiro[2][2] == tabuleiro[2][3]) then
+				return true
+
+			elseif(tabuleiro[3][1] ~= " " and tabuleiro[3][1] == tabuleiro[3][2] and tabuleiro[3][2] == tabuleiro[3][3]) then
+				return true
+
+			elseif(tabuleiro[1][1] ~= " " and tabuleiro[1][1] == tabuleiro[2][1] and tabuleiro[2][1] == tabuleiro[3][1]) then
+				return true
+
+			elseif( tabuleiro[1][2] ~= " " and tabuleiro[1][2] == tabuleiro[2][2] and tabuleiro[2][2] == tabuleiro[3][2]) then
+				return true
+
+			elseif(tabuleiro[1][3] ~= " " and  tabuleiro[1][3] == tabuleiro[2][3] and tabuleiro[2][3] == tabuleiro[3][3]) then
+				return true
+
+			elseif(tabuleiro[1][1] ~= " " and tabuleiro[1][1] == tabuleiro[2][2] and tabuleiro[2][2] == tabuleiro[3][3]) then
+				return true
+
+			elseif(tabuleiro[3][1] ~= " " and tabuleiro[3][1] == tabuleiro[2][2] and tabuleiro[2][2] == tabuleiro[1][3]) then
+
+				return true
+			end
+
+		else
+			print ("Jogo empatado\n!!! \n")
+			tabuleiro:reiniciarJogo()
+
+		end
+
+end
+
+--Função que reiniciar o jogo--
+
+function tabuleiro:reiniciarJogo()
+
+
+	while(true) do
+
+		print("Deseja reiniciar o Jogo: \n\n1)Sim \n2)Não")
+
+
+		verifica=io.read("*number")
+		io.read()
+
+		if(type(verifica)=="number") then
+
+			if(verifica==1) then
+
+				posicao = 0
+				contJogadasdisponiveis = 9
+
+				tabuleiro = {	{" "," "," "},
+								{" "," "," "},
+								{" "," "," "}}
+
+				jogadasDisponiveis = {	{"1","2","3"},
+										{"4","5","6"},
+										{"7","8","9"}}
+
+				tabuleiro:reiniciarJogo()
+
+
+			elseif (verifica==2) then
+
+				print("\nFIM...\n")
+				exibirPlacar()
+				return false
+
+			end
+
+
+		else
+			print ("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n=========================\nESCOLHA UMA OPÇÃO VÁLIDA!\n=========================\n\n\n\n")
+
+		end
+
+
+	end
+end
+
+--================================================================================================================
+--PLACAR==========================================================================================================
+
+--Função que altera Placar--
+
+function alterarPlacar(elementoAtual)
+
+	if(elementoAtual == "X") then
+		placarX = placarX +1
+
+	elseif (elementoAtual == "O")then
+		placarO = placarO +1
+
+	end
+
+
+
+end
+
+--Função que exibe Placar--
+
+function exibirPlacar()
+
+	print ( nomeJogador1 .. "\n"..
+			nomeJogador2 .. "\n\n"..
+
+			"Placar de 'X' = " .. placarX .. "\n"..
+			"Placar de 'O' = " .. placarO .. "\n")
+
+
+end
+
+--===============================================================================================
+--Main--=========================================================================================
+
+print(escolherNomes())
+
+
+--===============================================================================================
+
+
+
+
+
+
